@@ -31,6 +31,15 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/dp203apache1')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_CSV')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -967,6 +976,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQLScript Creating Output Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE TABLE [dbo].[SalesDataTransformed]\n( \n\t[sale_id] [varchar](50)  NOT NULL,\n\t[product_id] [varchar](50)  NULL,\n\t[product_name] [varchar](200)  NULL,\n\t[quantity] [varchar](50)  NULL,\n\t[price] [varchar](50)  NULL,\n\t[total_amount] [varchar](50)  NULL,\n\t[sale_date] [varchar](50)  NULL,\n\t[region] [varchar](50)  NULL\n)\nWITH\n(\n\tDISTRIBUTION = HASH ( [sale_id] ),\n\tCLUSTERED COLUMNSTORE INDEX\n)\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "dp203azuresqlpool",
+						"poolName": "dp203azuresqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SQLScript Creating Table')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -995,7 +1024,7 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "dp203apache",
+					"referenceName": "dp203apache1",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
@@ -1008,7 +1037,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "8701e036-813f-4f89-b822-a495ffd41a27"
+						"spark.autotune.trackingId": "985600c2-d927-491b-bf92-da5f94399a0f"
 					}
 				},
 				"metadata": {
@@ -1022,19 +1051,18 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/ade6f070-898b-4abd-9943-3746b0fac3a2/resourceGroups/dp203rishabcapstoneproject/providers/Microsoft.Synapse/workspaces/dp203rishabsaw/bigDataPools/dp203apache",
-						"name": "dp203apache",
+						"id": "/subscriptions/ade6f070-898b-4abd-9943-3746b0fac3a2/resourceGroups/dp203rishabcapstoneproject/providers/Microsoft.Synapse/workspaces/dp203rishabsaw/bigDataPools/dp203apache1",
+						"name": "dp203apache1",
 						"type": "Spark",
-						"endpoint": "https://dp203rishabsaw.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/dp203apache",
+						"endpoint": "https://dp203rishabsaw.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/dp203apache1",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.4",
-						"nodeCount": 3,
+						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -1133,10 +1161,35 @@
 				},
 				"autoScale": {
 					"enabled": true,
-					"maxNodeCount": 10,
+					"maxNodeCount": 15,
 					"minNodeCount": 3
 				},
 				"nodeCount": 3,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "3.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "southeastasia"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dp203apache1')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 10,
+					"minNodeCount": 3
+				},
+				"nodeCount": 10,
 				"nodeSize": "Small",
 				"nodeSizeFamily": "MemoryOptimized",
 				"sparkVersion": "3.4",
