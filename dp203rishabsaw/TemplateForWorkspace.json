@@ -1008,7 +1008,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "5a4df13e-7705-4da3-ba2a-8c8985b6f2b2"
+						"spark.autotune.trackingId": "8701e036-813f-4f89-b822-a495ffd41a27"
 					}
 				},
 				"metadata": {
@@ -1104,7 +1104,7 @@
 							"//Rounding amount to 2 decimal places\r\n",
 							"df = df.withColumn(\"total_amount\", bround(col(\"total_amount\"), 2))\r\n",
 							"\r\n",
-							"val adlsPath = \"abfss://files@dp203rishabsa.dfs.core.windows.net/Files/TransformedDataOutput/TransformedData.csv\"\r\n",
+							"val adlsPath = \"abfss://files@dp203rishabsa.dfs.core.windows.net/TransformedDataOutput/TransformedData.csv\"\r\n",
 							"\r\n",
 							"// Write DataFrame to ADLS in CSV format\r\n",
 							"df.write\r\n",
@@ -1116,7 +1116,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 19
+						"execution_count": null
 					}
 				]
 			},
