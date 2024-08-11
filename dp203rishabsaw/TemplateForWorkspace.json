@@ -997,7 +997,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Data Transformation')]",
+			"name": "[concat(parameters('workspaceName'), '/Notebook 1')]",
 			"type": "Microsoft.Synapse/workspaces/notebooks",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -1017,7 +1017,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "31758c5f-6168-45ef-8ab2-498dd0a5ade1"
+						"spark.autotune.trackingId": "967fcc29-93fe-4514-9973-b64d1a1c65d4"
 					}
 				},
 				"metadata": {
@@ -1028,7 +1028,7 @@
 						"display_name": "Synapse PySpark"
 					},
 					"language_info": {
-						"name": "python"
+						"name": "scala"
 					},
 					"a365ComputeOptions": {
 						"id": "/subscriptions/ade6f070-898b-4abd-9943-3746b0fac3a2/resourceGroups/dp203rishabcapstoneproject/providers/Microsoft.Synapse/workspaces/dp203rishabsaw/bigDataPools/dp203apachepool",
@@ -1050,14 +1050,37 @@
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
+						"metadata": {
+							"microsoft": {
+								"language": "scala"
+							}
+						},
 						"source": [
-							"from pyspark.sql import SparkSession\r\n",
-							"from pyspark.sql.functions import col, avg, sum, count, when\r\n",
-							"from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType"
+							"%%spark\n",
+							"val df = spark.read.synapsesql(\"dp203azuresqlpool.dbo.SalesDataCSV\") \n",
+							"/*df.write.mode(\"overwrite\").saveAsTable(\"default.t1\")*/"
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.show(100)"
+						],
+						"outputs": [],
+						"execution_count": 3
 					}
 				]
 			},
