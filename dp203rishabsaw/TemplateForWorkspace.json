@@ -22,16 +22,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/dp203azuresqlpool')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/dp203apachepool')]",
+			"name": "[concat(parameters('workspaceName'), '/dp203apache')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
@@ -997,20 +988,155 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/dp203apachepool')]",
+			"name": "[concat(parameters('workspaceName'), '/Transformed_Data_Script')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "dp203apache",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "5a4df13e-7705-4da3-ba2a-8c8985b6f2b2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/ade6f070-898b-4abd-9943-3746b0fac3a2/resourceGroups/dp203rishabcapstoneproject/providers/Microsoft.Synapse/workspaces/dp203rishabsaw/bigDataPools/dp203apache",
+						"name": "dp203apache",
+						"type": "Spark",
+						"endpoint": "https://dp203rishabsaw.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/dp203apache",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"metadata": {
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"**Appending the Data Tables**"
+						]
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "scala"
+							}
+						},
+						"source": [
+							"%%spark\r\n",
+							"import org.apache.spark.sql.functions.trim\r\n",
+							"import org.apache.spark.sql.functions.{col, date_format}\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"//Reading data from staging tables\r\n",
+							"var ot_df = spark.read.synapsesql(\"dp203azuresqlpool.dbo.SalesDataJSON\") \r\n",
+							"ot_df = ot_df.withColumn(\"source\", lit(\"Online Transaction\"))\r\n",
+							"\r\n",
+							"var csv_df = spark.read.synapsesql(\"dp203azuresqlpool.dbo.SalesDataCSV\") \r\n",
+							"csv_df = csv_df.withColumn(\"source\", lit(\"CSV\"))\r\n",
+							"\r\n",
+							"var parq_df = spark.read.synapsesql(\"dp203azuresqlpool.dbo.SalesDataParquet\") \r\n",
+							"parq_df = parq_df.withColumn(\"source\", lit(\"Parquet\"))\r\n",
+							"\r\n",
+							"//Appending the dataframes\r\n",
+							"var df = ot_df.union(csv_df).union(parq_df)\r\n",
+							"\r\n",
+							"//Replacing NULL Values\r\n",
+							"df = df.withColumn(\"quantity\", when(col(\"quantity\").isNull,col(\"total_amount\")/col(\"price\")).otherwise(col(\"quantity\")))\r\n",
+							"\r\n",
+							"df = df.withColumn(\"price\", when(col(\"price\").isNull,col(\"total_amount\")/col(\"quantity\")).otherwise(col(\"price\")))\r\n",
+							"\r\n",
+							"df = df.withColumn(\"total_amount\", when(col(\"total_amount\").isNull,col(\"price\")*col(\"quantity\")).otherwise(col(\"total_amount\")))\r\n",
+							"\r\n",
+							"//Removing time from data column\r\n",
+							"df = df.withColumn(\"sale_date_new\", split(col(\"sale_date\"), \" \").getItem(0))\r\n",
+							"\r\n",
+							"//Creating year column from sale date\r\n",
+							"df = df.withColumn(\"year\", split(col(\"sale_date_new\"), \"-\").getItem(0))\r\n",
+							"\r\n",
+							"//Rounding amount to 2 decimal places\r\n",
+							"df = df.withColumn(\"total_amount\", bround(col(\"total_amount\"), 2))\r\n",
+							"\r\n",
+							"val adlsPath = \"abfss://files@dp203rishabsa.dfs.core.windows.net/Files/TransformedDataOutput/TransformedData.csv\"\r\n",
+							"\r\n",
+							"// Write DataFrame to ADLS in CSV format\r\n",
+							"df.write\r\n",
+							"  .format(\"csv\")\r\n",
+							"  .option(\"header\", \"true\")\r\n",
+							"  .mode(\"overwrite\")\r\n",
+							"  .save(adlsPath)\r\n",
+							"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 19
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dp203apache')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"autoPause": {
 					"enabled": true,
-					"delayInMinutes": 15
+					"delayInMinutes": 5
 				},
 				"autoScale": {
 					"enabled": true,
-					"maxNodeCount": 5,
+					"maxNodeCount": 10,
 					"minNodeCount": 3
 				},
-				"nodeCount": 10,
+				"nodeCount": 3,
 				"nodeSize": "Small",
 				"nodeSizeFamily": "MemoryOptimized",
 				"sparkVersion": "3.4",
