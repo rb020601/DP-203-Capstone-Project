@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "1",
-				"spark.autotune.trackingId": "4a9be82d-3dc3-4026-bf76-d7054dadcc14"
+				"spark.autotune.trackingId": "dfd9cb00-8a10-4626-a233-f4bd1587b93a"
 			}
 		},
 		"metadata": {
@@ -110,8 +110,10 @@
 					"//Creating year column from sale date\r\n",
 					"df = df.withColumn(\"year\", split(col(\"sale_date_new\"), \"-\").getItem(0))\r\n",
 					"\r\n",
-					"//Rounding amount to 2 decimal places\r\n",
+					"//Rounding price,amount to decimal places\r\n",
 					"df = df.withColumn(\"total_amount\", bround(col(\"total_amount\"), 2))\r\n",
+					"df = df.withColumn(\"price\", bround(col(\"price\"), 2))\r\n",
+					"df = df.withColumn(\"quantity\",bround(col(\"quantity\"),0))\r\n",
 					"\r\n",
 					"val adlsPath = \"abfss://files@dp203rishabsa.dfs.core.windows.net/TransformedDataOutput/TransformedData.csv\"\r\n",
 					"\r\n",
@@ -124,7 +126,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 1
+				"execution_count": 3
 			}
 		]
 	}
