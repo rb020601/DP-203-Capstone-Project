@@ -22,24 +22,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/dp203apache')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/dp203apache1')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/CopyPipeline_CSV')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -1024,7 +1006,7 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "dp203apache1",
+					"referenceName": "dp203apache",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
@@ -1032,12 +1014,12 @@
 					"driverCores": 4,
 					"executorMemory": "28g",
 					"executorCores": 4,
-					"numExecutors": 2,
+					"numExecutors": 1,
 					"conf": {
 						"spark.dynamicAllocation.enabled": "false",
-						"spark.dynamicAllocation.minExecutors": "2",
-						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "985600c2-d927-491b-bf92-da5f94399a0f"
+						"spark.dynamicAllocation.minExecutors": "1",
+						"spark.dynamicAllocation.maxExecutors": "1",
+						"spark.autotune.trackingId": "02937e03-deac-4837-a364-424899516863"
 					}
 				},
 				"metadata": {
@@ -1051,18 +1033,19 @@
 						"name": "python"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/ade6f070-898b-4abd-9943-3746b0fac3a2/resourceGroups/dp203rishabcapstoneproject/providers/Microsoft.Synapse/workspaces/dp203rishabsaw/bigDataPools/dp203apache1",
-						"name": "dp203apache1",
+						"id": "/subscriptions/ade6f070-898b-4abd-9943-3746b0fac3a2/resourceGroups/dp203rishabcapstoneproject/providers/Microsoft.Synapse/workspaces/dp203rishabsaw/bigDataPools/dp203apache",
+						"name": "dp203apache",
 						"type": "Spark",
-						"endpoint": "https://dp203rishabsaw.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/dp203apache1",
+						"endpoint": "https://dp203rishabsaw.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/dp203apache",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
 						"sparkVersion": "3.4",
-						"nodeCount": 10,
+						"nodeCount": 3,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
@@ -1144,7 +1127,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 1
 					}
 				]
 			},
