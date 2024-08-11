@@ -1,0 +1,54 @@
+{
+	"name": "SourceDataset_xrf",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dp203rishabsaw-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "sales_data/posparquet",
+				"fileSystem": "files"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "sale_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "product_id",
+				"type": "UTF8"
+			},
+			{
+				"name": "product_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "quantity",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "price",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "total_amount",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "sale_date",
+				"type": "UTF8"
+			},
+			{
+				"name": "region",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

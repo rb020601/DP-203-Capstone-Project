@@ -1,0 +1,147 @@
+{
+	"name": "CopyPipeline_JSON",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_4uf",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "files/sales_data/onlinetransaction/"
+					},
+					{
+						"name": "Destination",
+						"value": "dbo.SalesDataJSON"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"writeBehavior": "Upsert",
+						"upsertSettings": {
+							"keys": [
+								"sale_id",
+								"product_id"
+							],
+							"interimSchemaName": ""
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['sale_id']"
+								},
+								"sink": {
+									"name": "sale_id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['product_id']"
+								},
+								"sink": {
+									"name": "product_id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['product_name']"
+								},
+								"sink": {
+									"name": "product_name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['quantity']"
+								},
+								"sink": {
+									"name": "quantity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['price']"
+								},
+								"sink": {
+									"name": "price",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['total_amount']"
+								},
+								"sink": {
+									"name": "total_amount",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['sale_date']"
+								},
+								"sink": {
+									"name": "sale_date",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['region']"
+								},
+								"sink": {
+									"name": "region",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_4uf",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_4uf",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-08-11T07:29:44Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

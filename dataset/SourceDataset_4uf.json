@@ -1,0 +1,48 @@
+{
+	"name": "SourceDataset_4uf",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dp203rishabsaw-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "sales_data/onlinetransaction",
+				"fileSystem": "files"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"sale_id": {
+					"type": "string"
+				},
+				"product_id": {
+					"type": "string"
+				},
+				"product_name": {
+					"type": "string"
+				},
+				"quantity": {
+					"type": "number"
+				},
+				"price": {
+					"type": "number"
+				},
+				"total_amount": {
+					"type": "number"
+				},
+				"sale_date": {
+					"type": "string"
+				},
+				"region": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}
